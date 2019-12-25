@@ -1,15 +1,13 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.compose import ColumnTransformer
 from sklearn.model_selection import GridSearchCV
 import re
 
 # Importing the training and test datasets
 dataset = pd.read_csv('train.csv')
 data_test = pd.read_csv('test.csv')
-
-
 
 #Feature engineering on Names column
 def title(name):
@@ -105,37 +103,13 @@ X_test = all_data.drop(['Name', 'Cabin', 'Ticket', 'Age', 'Fare', 'PassengerId',
 
 df_train = pd.DataFrame(X_train)
 
-#Dummy variables
-labelencoder_X = LabelEncoder()
-X_train[:,4] = labelencoder_X.fit_transform(X_train[:,4])
-X_train[:,5] = labelencoder_X.fit_transform(X_train[:,5])
-X_train[:,6] = labelencoder_X.fit_transform(X_train[:,6])
-onehotencoder = OneHotEncoder(categorical_features = [4,5,6])
-X_train = onehotencoder.fit_transform(X_train).toarray()
-
-labelencoder_X = LabelEncoder()
-X_test[:,4] = labelencoder_X.fit_transform(X_test[:,4])
-X_test[:,5] = labelencoder_X.fit_transform(X_test[:,5])
-X_test[:,6] = labelencoder_X.fit_transform(X_test[:,6])
-onehotencoder = OneHotEncoder(categorical_features = [4,5,6])
-X_test = onehotencoder.fit_transform(X_test).toarray()
-
-#SVC
-#Fitting Kernel SVC to the Training set
-from sklearn.svm import SVC
-classifier = SVC(kernel = 'rbf', random_state = 0)
-classifier.fit(X_train, y_train)
-
-# Predict the Test set results
-y_pred = pd.Series(classifier.predict(X_test))
-
-#Output results
-results = pd.concat([data_test['PassengerId'], y_pred], axis = 1)
-results.to_csv('Titanic_my_SVC_predictions.csv')
-
+# Encode categorical features
+columnTransformer = ColumnTransformer([('encoder', OneHotEncoder(), [4,5,6])], remainder='passthrough')
+X_train = np.array(columnTransformer.fit_transform(X_train), dtype = np.str)
+X_test = np.array(columnTransformer.fit_transform(X_test), dtype = np.str)
 
 #Best score yet on kaggle: 0.808
-#Parameter tuning
+#Parameter tuning for SVC
 from sklearn.svm import SVC
 model = SVC()
 param_grid = {'kernel': ['rbf','linear'],
@@ -162,4 +136,4 @@ y_pred[l2] = 0
 #Output results
 results = np.vstack([data_test['PassengerId'].values, y_pred.values]).T
 submission = pd.DataFrame(results, columns = ['PassengerId', 'Survived'])
-submission.to_csv('Titanic_my_tuned_SVC-GM_predictions.csv' , index = False)
+submission.to_csv(r'Titanic_my_tuned_SVC-GM_predictions.csv' , index = False)
