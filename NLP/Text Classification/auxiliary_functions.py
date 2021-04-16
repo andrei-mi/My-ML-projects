@@ -1,5 +1,8 @@
+from sklearn.metrics import roc_auc_score
+
+
 def df_info(df):
-    print(f'The initial shape of the dataframe is {df.shape}')
+    print(f'The initial shape of the dataframe is {df.shape}.')
     print('\n-----------------------------------------\n')
     print(f'The types of the columns are:\n\n{df.dtypes}')
     print('\n-----------------------------------------\n')
@@ -8,7 +11,7 @@ def df_info(df):
     df_dropna = df.dropna()
     if len(df_dropna)/len(df) > 0.8:
         df.dropna(inplace=True)
-    print(f'The shape of the dataframe after dropping the NANs(if necessary) is {df.shape}')
+    print(f'The shape of the dataframe after dropping the NANs(if necessary) is {df.shape}.')
     print('\n-----------------------------------------\n')
 
 
@@ -30,3 +33,16 @@ def remove_blanks(df):
             blanks.append(i)
     df.drop(blanks, inplace=True)
     return df
+
+
+def map_label(label):
+    if label == 'pos':
+        return 1
+    else:
+        return 0
+
+
+def processed_auroc(y_test, predictions):
+    mapped_y_test = list(map(map_label, y_test))
+    mapped_predictions = list(map(map_label, predictions))
+    return roc_auc_score(mapped_y_test, mapped_predictions)
