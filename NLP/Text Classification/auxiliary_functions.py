@@ -22,6 +22,7 @@ def check_categorical_columns(df):
         print(f'Column {col} has {entirely_empty_strings_count} entirely empty strings and {space_string_count} only space strings')
     print('\n-----------------------------------------\n')
 
+
 def remove_blanks(df):
     blanks = []
     for i, lb, rv in df.itertuples():
