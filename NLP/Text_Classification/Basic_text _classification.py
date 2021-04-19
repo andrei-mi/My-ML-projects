@@ -1,12 +1,12 @@
 import pandas as pd
-from auxiliary_functions import check_categorical_columns, df_info, remove_blanks, processed_auroc
+from NLP.auxiliary_functions import check_categorical_columns, df_info, remove_blanks, processed_auroc
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import LinearSVC
 from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
 
-df = pd.read_csv('moviereviews.tsv', sep='\t')
+df = pd.read_csv('../Datasets/moviereviews.tsv', sep='\t')
 
 # Display some initial information about the dataframe
 df_info(df)
