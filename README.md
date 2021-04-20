@@ -1,2 +1,2 @@
-# My-ML-projects
-Machine learning projects 
+# My-projects
+Machine learning and NLP projects 
